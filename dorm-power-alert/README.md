@@ -5,6 +5,8 @@
 ![Notifier](https://img.shields.io/badge/Notifier-SMTP%20Email-0EA5E9)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows&logoColor=white)
 
+> 接管/代配置：可以向作者（`2653626988@qq.com`）提供宿舍号和对应宿舍人员的一个 QQ 邮箱即可接管；也可以填写腾讯文档：[[腾讯文档] 宿舍楼号](https://docs.qq.com/sheet/DWFNueEtUQkRsckxa)。
+
 一个面向宿舍场景的电量监控项目，支持：
 - 无 GUI 持续监控（`run.py`）
 - GUI 卡片化管理多宿舍（`run_gui.py`）
@@ -254,4 +256,3 @@ dist/DormPowerAlertGUI/DormPowerAlertGUI.exe
 - 构建 EXE 建议 Python `3.11/3.12`（兼容性更稳）
 
 ---
-
