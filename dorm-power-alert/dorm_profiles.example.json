@@ -1,0 +1,20 @@
+[
+  {
+    "name": "男19-215",
+    "building_id": "10",
+    "building_name": "男19#楼",
+    "room": "215",
+    "alert_email": "receiver1@example.com",
+    "interval_seconds": 300,
+    "threshold": 10
+  },
+  {
+    "name": "男20-312",
+    "building_id": "8",
+    "building_name": "男20#楼",
+    "room": "312",
+    "alert_email": "receiver2@example.com",
+    "interval_seconds": 180,
+    "threshold": 8
+  }
+]
