@@ -2,3 +2,6 @@
 .idea
 
 .gitignore
+
+__pycache__/
+*.pyc
