@@ -12,7 +12,6 @@ from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from PySide6.QtCore import QObject, Qt, QTimer, Signal
 from PySide6.QtGui import QColor
@@ -45,8 +44,8 @@ from app.main import build_email_notifier, build_monitor_service
 from app.models import QueryResult
 from app.notifiers.email import EmailNotifier
 from app.services.monitor_service import MonitorService
+from app.timezone_utils import BEIJING_TZ
 
-BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 PROFILE_PATH = Path.cwd() / "gui_profiles.json"
 USAGE_STATE_PATH = Path.cwd() / "gui_usage_state.json"
 logger = logging.getLogger(__name__)

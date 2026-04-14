@@ -5,9 +5,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from datetime import datetime
-from zoneinfo import ZoneInfo
-
-BEIJING_TZ = ZoneInfo("Asia/Shanghai")
+from app.timezone_utils import BEIJING_TZ
 
 
 class WeeklyResetFileHandler(logging.FileHandler):

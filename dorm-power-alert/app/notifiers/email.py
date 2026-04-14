@@ -8,12 +8,11 @@ import re
 import smtplib
 from datetime import datetime
 from email.message import EmailMessage
-from zoneinfo import ZoneInfo
 
 from app.notifiers.base import Notifier
+from app.timezone_utils import BEIJING_TZ
 
 logger = logging.getLogger(__name__)
-BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 
 
 class EmailNotifierError(RuntimeError):

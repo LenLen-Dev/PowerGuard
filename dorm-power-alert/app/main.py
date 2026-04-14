@@ -11,7 +11,6 @@ from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
-from zoneinfo import ZoneInfo
 
 from app.clients.electric_client import ElectricClient
 from app.config import AppConfig
@@ -20,9 +19,9 @@ from app.models import QueryResult
 from app.notifiers.email import EmailNotifier
 from app.parsers.electric_parser import ElectricParser
 from app.services.monitor_service import MonitorService
+from app.timezone_utils import BEIJING_TZ
 
 logger = logging.getLogger(__name__)
-BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 
 
 def build_email_notifier(config: AppConfig) -> EmailNotifier:

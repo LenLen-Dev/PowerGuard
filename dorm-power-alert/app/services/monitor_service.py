@@ -5,16 +5,15 @@ from __future__ import annotations
 import logging
 import time
 from datetime import datetime, timezone
-from zoneinfo import ZoneInfo
 
 from app.clients.electric_client import ElectricClient
 from app.config import AppConfig
 from app.models import AlertDecision, ElectricReading, QueryResult
 from app.notifiers.base import Notifier
 from app.parsers.electric_parser import ElectricParser
+from app.timezone_utils import BEIJING_TZ
 
 logger = logging.getLogger(__name__)
-BEIJING_TZ = ZoneInfo("Asia/Shanghai")
 
 
 class MonitorService:

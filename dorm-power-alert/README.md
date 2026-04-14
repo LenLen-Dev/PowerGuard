@@ -1,6 +1,6 @@
 # PowerGuard · 宿舍电量监控与邮件预警
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
 ![GUI](https://img.shields.io/badge/GUI-PySide6-41CD52?logo=qt&logoColor=white)
 ![Notifier](https://img.shields.io/badge/Notifier-SMTP%20Email-0EA5E9)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?logo=windows&logoColor=white)
@@ -53,7 +53,8 @@ dorm-power-alert/
 │  └─ test_quiet_hours.py
 ├─ .env.example
 ├─ dorm_profiles.example.json
-├─ requirements.txt
+├─ requirements.txt           # 无GUI依赖（软路由推荐）
+├─ requirements-gui.txt       # GUI额外依赖
 ├─ requirements-build.txt
 ├─ build_gui.ps1
 ├─ run.py
@@ -70,7 +71,18 @@ dorm-power-alert/
 cd dorm-power-alert
 uv venv .venv
 .\.venv\Scripts\Activate.ps1
+```
+
+无 GUI（软路由）安装：
+
+```powershell
 uv pip install -r requirements.txt
+```
+
+GUI 桌面版安装：
+
+```powershell
+uv pip install -r requirements-gui.txt
 ```
 
 ---
@@ -221,6 +233,7 @@ python -m unittest discover -s tests -v
 ### 11.1 安装打包依赖
 
 ```powershell
+uv pip install -r requirements-gui.txt
 uv pip install -r requirements-build.txt
 ```
 
@@ -257,6 +270,6 @@ dist/DormPowerAlertGUI/DormPowerAlertGUI.exe
 
 - 登录态依赖固定 `JSESSIONID` 与 `Referer`
 - 暂未实现自动登录/自动续期
-- 构建 EXE 建议 Python `3.11/3.12`（兼容性更稳）
+- 软路由建议运行无 GUI 版本（只安装 `requirements.txt`）
 
 ---
