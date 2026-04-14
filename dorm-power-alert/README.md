@@ -27,7 +27,7 @@
 | 接口查询 | 定时请求电量接口，解析 `errmsg` 中剩余电量 |
 | 多宿舍 | GUI/无GUI都支持多宿舍配置与独立轮询 |
 | 告警策略 | 阈值触发（`<=`）+ 冷却时间防轰炸 |
-| 邮件通知 | SMTP 文本+HTML模板，低电量红色高亮 |
+| 邮件通知 | SMTP 文本+HTML模板 + 发件池轮询 + 队列化发送 |
 | 静默时段 | 北京时间 `00:00:00 - 08:00:00` 不发送任何邮件 |
 | 每日统计 | 每天 `00:00` 重置“今日耗电”统计 |
 | 每晚汇总 | 仅在北京时间 `22` 点小时内发送，每宿舍每天最多1次 |
@@ -50,7 +50,9 @@ dorm-power-alert/
 │  └─ main.py                 # 无GUI主调度（多宿舍）
 ├─ tests/
 │  ├─ test_parser.py
-│  └─ test_quiet_hours.py
+│  ├─ test_quiet_hours.py
+│  ├─ test_email_sender_pool.py
+│  └─ test_queued_email_notifier.py
 ├─ .env.example
 ├─ dorm_profiles.example.json
 ├─ requirements.txt           # 无GUI依赖（软路由推荐）
@@ -100,7 +102,8 @@ Copy-Item .env.example .env
 | 分类 | 变量 |
 |---|---|
 | 接口 | `REFERER` `JSESSIONID` `AID` `ACCOUNT` `AREA` `AREA_NAME` `BUILDING_ID` `BUILDING_NAME` `ROOM_ID` `ROOM_NAME` |
-| 邮件 | `EMAIL_SMTP_HOST` `EMAIL_USERNAME` `EMAIL_PASSWORD` `EMAIL_FROM` `EMAIL_TO` |
+| 邮件接收 | `EMAIL_TO` |
+| 邮件发送（二选一） | 单账号：`EMAIL_SMTP_HOST` `EMAIL_USERNAME` `EMAIL_PASSWORD` `EMAIL_FROM`；或发件池：`EMAIL_POOL` / `EMAIL_POOL_FILE` |
 
 ### 4.2 常用可调项
 
@@ -114,8 +117,28 @@ Copy-Item .env.example .env
 | `DORM_PROFILES_FILE` | `gui_profiles.json` | 无GUI多宿舍配置文件 |
 | `HEADLESS_LOG_FILE` | `logs/headless_monitor.log` | 无GUI日志文件 |
 | `GUI_LOG_FILE` | `logs/gui_monitor.log` | GUI日志文件 |
+| `EMAIL_QUEUE_MAX_SIZE` | `200` | 邮件队列容量 |
+| `EMAIL_QUEUE_PUT_TIMEOUT_SECONDS` | `2` | 入队超时（秒） |
+| `EMAIL_QUEUE_MAX_ATTEMPTS` | `3` | 单封邮件最大重试次数 |
+| `EMAIL_QUEUE_RETRY_BACKOFF_SECONDS` | `1.5` | 重试间隔（秒） |
 
-### 4.3 `#` 字符注意事项
+### 4.3 发件池配置示例（推荐）
+
+方式一：在 `.env` 中直接写 JSON（短配置适合）：
+
+```env
+EMAIL_POOL=[{"smtp_host":"smtp.qq.com","smtp_port":587,"use_tls":true,"username":"a@qq.com","password":"codeA","sender":"a@qq.com"},{"smtp_host":"smtp.163.com","smtp_port":465,"use_tls":true,"username":"b@163.com","password":"codeB","sender":"b@163.com"}]
+```
+
+方式二：使用 JSON 文件（长配置推荐）：
+
+```env
+EMAIL_POOL_FILE=email_pool.json
+```
+
+格式可参考 [email_pool.example.json](./email_pool.example.json)。
+
+### 4.4 `#` 字符注意事项
 
 如果值中含 `#`（如 `男19#楼`），请加引号，避免被当成注释：
 
@@ -225,6 +248,8 @@ python -m unittest discover -s tests -v
 当前包含：
 - 解析器测试（`test_parser.py`）
 - 静默时段边界测试（`test_quiet_hours.py`）
+- 发件池轮询/容错测试（`test_email_sender_pool.py`）
+- 队列发送与重试测试（`test_queued_email_notifier.py`）
 
 ---
 

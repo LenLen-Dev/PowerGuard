@@ -1,0 +1,18 @@
+[
+  {
+    "smtp_host": "smtp.qq.com",
+    "smtp_port": 587,
+    "use_tls": true,
+    "username": "sender_a@qq.com",
+    "password": "smtp_code_a",
+    "sender": "sender_a@qq.com"
+  },
+  {
+    "smtp_host": "smtp.163.com",
+    "smtp_port": 465,
+    "use_tls": true,
+    "username": "sender_b@163.com",
+    "password": "smtp_code_b",
+    "sender": "sender_b@163.com"
+  }
+]

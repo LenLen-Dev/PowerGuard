@@ -13,10 +13,13 @@ from pathlib import Path
 from typing import Any
 
 from app.clients.electric_client import ElectricClient
-from app.config import AppConfig
+from app.config import AppConfig, EmailSenderAccount
 from app.logging_setup import setup_logging
 from app.models import QueryResult
+from app.notifiers.base import Notifier
 from app.notifiers.email import EmailNotifier
+from app.notifiers.email_pool import EmailSenderPool
+from app.notifiers.queued_email import QueuedEmailNotifier
 from app.parsers.electric_parser import ElectricParser
 from app.services.monitor_service import MonitorService
 from app.timezone_utils import BEIJING_TZ
@@ -24,26 +27,43 @@ from app.timezone_utils import BEIJING_TZ
 logger = logging.getLogger(__name__)
 
 
-def build_email_notifier(config: AppConfig) -> EmailNotifier:
-    """Build email notifier from config."""
+def _build_single_email_notifier(config: AppConfig, sender: EmailSenderAccount) -> EmailNotifier:
     return EmailNotifier(
-        smtp_host=config.email_smtp_host or "",
-        smtp_port=config.email_smtp_port,
-        use_tls=config.email_use_tls,
-        username=config.email_username or "",
-        password=config.email_password or "",
-        sender=config.email_from or "",
+        smtp_host=sender.smtp_host,
+        smtp_port=sender.smtp_port,
+        use_tls=sender.use_tls,
+        username=sender.username,
+        password=sender.password,
+        sender=sender.sender,
         recipient=config.email_to or "",
         timeout_seconds=config.request_timeout_seconds,
     )
 
 
-def build_monitor_service(config: AppConfig) -> MonitorService:
+def build_email_notifier(config: AppConfig) -> Notifier:
+    """Build email notifier from config."""
+    notifiers = [_build_single_email_notifier(config, sender) for sender in config.email_sender_pool]
+    pool: Notifier
+    if len(notifiers) == 1:
+        pool = notifiers[0]
+    else:
+        pool = EmailSenderPool(notifiers)
+
+    return QueuedEmailNotifier(
+        downstream=pool,
+        max_queue_size=config.email_queue_max_size,
+        put_timeout_seconds=config.email_queue_put_timeout_seconds,
+        max_attempts=config.email_queue_max_attempts,
+        retry_backoff_seconds=config.email_queue_retry_backoff_seconds,
+    )
+
+
+def build_monitor_service(config: AppConfig, notifier: Notifier | None = None) -> MonitorService:
     """Build monitor service from app config."""
     client = ElectricClient(config)
     parser = ElectricParser()
-    notifier = build_email_notifier(config)
-    return MonitorService(config=config, client=client, parser=parser, notifier=notifier)
+    active_notifier = notifier or build_email_notifier(config)
+    return MonitorService(config=config, client=client, parser=parser, notifier=active_notifier)
 
 
 @dataclass
@@ -53,7 +73,7 @@ class MultiRuntime:
     profile_label: str
     config: AppConfig
     service: MonitorService
-    summary_notifier: EmailNotifier
+    summary_notifier: Notifier
     interval_seconds: int
     next_run_at: datetime
     busy: bool = False
@@ -117,8 +137,9 @@ def _build_multi_runtimes(base_config: AppConfig, profile_items: list[dict[str, 
     for idx, item in enumerate(profile_items, start=1):
         try:
             cfg = _build_config_for_profile(base_config, item)
-            service = build_monitor_service(cfg)
-            summary_notifier = build_email_notifier(cfg)
+            notifier = build_email_notifier(cfg)
+            service = build_monitor_service(cfg, notifier=notifier)
+            summary_notifier = notifier
             label = str(_profile_value(item, "name") or f"{cfg.building_name}{cfg.room_name}")
             runtimes.append(
                 MultiRuntime(
@@ -312,11 +333,12 @@ def main() -> None:
         "No multi-dorm profile file found or empty (%s). Fallback to single dorm runtime scheduler.",
         profile_path,
     )
+    single_notifier = build_email_notifier(config)
     single = MultiRuntime(
         profile_label=f"{config.building_name}{config.room_name}",
         config=config,
-        service=build_monitor_service(config),
-        summary_notifier=build_email_notifier(config),
+        service=build_monitor_service(config, notifier=single_notifier),
+        summary_notifier=single_notifier,
         interval_seconds=config.check_interval_seconds,
         next_run_at=datetime.now(),
     )

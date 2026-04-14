@@ -42,7 +42,7 @@ from app.config import AppConfig
 from app.logging_setup import setup_logging
 from app.main import build_email_notifier, build_monitor_service
 from app.models import QueryResult
-from app.notifiers.email import EmailNotifier
+from app.notifiers.base import Notifier
 from app.services.monitor_service import MonitorService
 from app.timezone_utils import BEIJING_TZ
 
@@ -148,7 +148,7 @@ class DormProfile:
 class ProfileRuntime:
     profile: DormProfile
     service: MonitorService
-    summary_notifier: EmailNotifier
+    summary_notifier: Notifier
     next_run: datetime
     busy: bool = False
     last_result: QueryResult | None = None
@@ -651,10 +651,11 @@ class MainWindow(QMainWindow):
 
         for p in self.profiles.values():
             cfg = self._build_profile_config(p)
+            notifier = build_email_notifier(cfg)
             rt = ProfileRuntime(
                 profile=p,
-                service=build_monitor_service(cfg),
-                summary_notifier=build_email_notifier(cfg),
+                service=build_monitor_service(cfg, notifier=notifier),
+                summary_notifier=notifier,
                 next_run=datetime.now(),
             )
             if p.id in old_results:
