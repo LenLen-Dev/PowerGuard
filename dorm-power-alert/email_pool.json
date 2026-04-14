@@ -1,0 +1,18 @@
+[
+  {
+    "smtp_host": "smtp.qq.com",
+    "smtp_port": 587,
+    "use_tls": true,
+    "username": "powerguard",
+    "password": "evsipfdkkrehfadh",
+    "sender": "powerguard@qq.com"
+  },
+  {
+    "smtp_host": "smtp.qq.com",
+    "smtp_port": 587,
+    "use_tls": true,
+    "username": "powerguard3",
+    "password": "tjfsccydvuzldggh",
+    "sender": "2717412647@qq.com"
+  }
+]
