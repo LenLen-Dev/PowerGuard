@@ -253,6 +253,17 @@ h1 {
   font-size: 0.9rem;
 }
 
+.quick-access {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+}
+
+.quick-access .btn {
+  margin-top: 1rem;
+}
+
 .site-footer {
   padding: 2.6rem 0 2rem;
   color: var(--muted);
