@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerGuard | 宿舍断电提醒</title>
+    <meta
+      name="description"
+      content="PowerGuard 是一个用于宿舍设备断电监测与提醒的轻量工具，支持 GUI 与无头模式，专注稳定与低打扰体验。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a" aria-hidden="true"></div>
+    <div class="ambient ambient-b" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="#top">
+          <span class="brand-dot"></span>
+          <span>PowerGuard</span>
+        </a>
+        <nav class="nav">
+          <a href="#features">特性</a>
+          <a href="#workflow">流程</a>
+          <a href="#deploy">部署</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero container">
+        <p class="tag">Dorm Automation Toolkit</p>
+        <h1>宿舍断电，不再后知后觉。</h1>
+        <p class="lead">
+          PowerGuard 持续监听关键状态，发生断电或异常时第一时间提醒你。
+          用更小的成本，换来更稳定的设备守护体验。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://github.com/LenLen-Dev/PowerGuard" target="_blank" rel="noreferrer">查看 GitHub</a>
+          <a class="btn btn-ghost" href="#deploy">快速部署</a>
+        </div>
+        <ul class="hero-stats">
+          <li><span>2</span>运行模式</li>
+          <li><span>24/7</span>持续监控</li>
+          <li><span>低耦合</span>易于扩展</li>
+        </ul>
+      </section>
+
+      <section id="features" class="section container reveal">
+        <h2>核心特性</h2>
+        <div class="grid cards-3">
+          <article class="card">
+            <h3>实时监测</h3>
+            <p>持续检测供电状态与任务心跳，尽可能缩短异常发现时间。</p>
+          </article>
+          <article class="card">
+            <h3>灵活通知</h3>
+            <p>支持邮件等通知方式，可按你的使用习惯进行配置。</p>
+          </article>
+          <article class="card">
+            <h3>双模式运行</h3>
+            <p>既可 GUI 可视化管理，也可 headless 稳定后台运行。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="workflow" class="section container reveal">
+        <h2>工作流程</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <span>01</span>
+            <p>配置监测参数与通知方式</p>
+          </div>
+          <div class="timeline-item">
+            <span>02</span>
+            <p>启动监测服务（GUI 或无头）</p>
+          </div>
+          <div class="timeline-item">
+            <span>03</span>
+            <p>发生断电或异常时即时告警</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="deploy" class="section container reveal">
+        <h2>GitHub Pages 托管</h2>
+        <p class="deploy-note">
+          本页面文件位于仓库 <code>docs/</code> 目录，推送后可直接在 GitHub 仓库设置中启用 Pages 托管。
+        </p>
+        <a class="btn btn-primary" href="https://github.com/LenLen-Dev/PowerGuard/settings/pages" target="_blank" rel="noreferrer">打开 Pages 设置</a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© <span id="year"></span> PowerGuard. Built for practical reliability.</p>
+      </div>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
